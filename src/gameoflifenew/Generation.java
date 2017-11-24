@@ -1,67 +1,103 @@
 package gameoflifenew;
 
 import java.awt.AWTEvent;
+import java.awt.Button;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import javax.swing.JButton;
+import javax.swing.event.MouseInputAdapter;
 
-public class Generation extends Frame  {
+public class Generation extends Frame {
+
     private final int xDim, yDim;
     private final int xCell, yCell;
     private final int div = 20;
     protected Cell[][] cell;
-    
+    private boolean line = false;
+    private StartButton startButton;
+    private EndButton endButton;
+
     protected Generation(int w, int h, String s) {
-      super(s);  
-      xDim= w; 
-      yDim= h;  
-      xCell = w / div;
-      yCell = h / div;
-      cell = new Cell[xCell][yCell];
-      setUpMainWindow();
-      setupMouseAdapter(); 
-      this.setInitialConfiguration();
-    } 
-    
+        super(s);
+        xDim = w;
+        yDim = h;
+        xCell = w / div;
+        yCell = h / div;
+        cell = new Cell[xCell][yCell];
+        System.out.println("xCell: " + xCell);
+        System.out.println("yCell: " + yCell);
+        setUpMainWindow();
+        setupMouseAdapter();
+        
+        startButton= new StartButton(100, 680,"Start");
+        this.add(startButton);
+        startButton.setEnabled(true); 
+        
+        endButton= new EndButton(300,680,"End");
+        this.add(endButton);
+        endButton.setEnabled(true); 
+        
+        line = true;
+        this.setInitialConfiguration();
+    }
+
     private void setUpMainWindow() {
         setLayout(null);
-        setSize(xDim,yDim); 
+        setSize(xDim, yDim);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     }
-    
+
     private void setupMouseAdapter() {
-        
-        addMouseListener(new MouseAdapter() { 
+
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed (MouseEvent evt){
+            public void mousePressed(MouseEvent evt) {
                 //this.cell = new Cell[xDim][yDim];
-                for (int i = 0; i < xDim; i++) {
-                    for (int k = 0; k < yDim; k++) {
-                        if(evt.getX() == i && evt.getY() ==k){
-                            System.out.println("X pos: " + evt.getX()); 
-                            System.out.println("Y pos: " + evt.getY());
-                        }
-                    }
-                }
+                System.out.println("X pos: " + evt.getX());
+                System.out.println("Y pos: " + evt.getY());
+                findCell(evt.getX(), evt.getY());
+                // 
+                line = false;
+                int xcoordinate = Math.round(evt.getX()/20)*20+10;
+                int ycoordinate = Math.round(evt.getY()/20)*20; 
+                System.out.println("xcoordinate: " + xcoordinate);
+                System.out.println("ycoordinate: " + ycoordinate);
+                
+                repaint(xcoordinate, ycoordinate, 20, 20);
+                //this.cell[i][k].draw(g, i, k);
             }
-        }); 
+        });
     }
+
     @Override
     public void processWindowEvent(WindowEvent evt) {
-        if(evt.getID()==WindowEvent.WINDOW_CLOSING) System.exit(1);
+        if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+            System.exit(1);
+        }
     }
-   
+
     @Override
-    public void paint(Graphics g){ 
+    public void paint(Graphics g) {
+        
         for (int i = 0; i < xCell; i++) {
             for (int k = 0; k < yCell; k++) {
-                this.cell[i][k].draw(g, i, k);
+                if (this.cell[i][k].getState()) {
+                    g.setColor(Color.white);
+                } else {
+                    g.setColor(Color.black);
+                }
+                this.cell[i][k].draw(g, i, k, line);
             }
-        }    
+        }
     }
-    
+
     private void setInitialConfiguration() {
         //this.cell = new Cell[xDim][yDim];
         for (int i = 0; i < xCell; i++) {
@@ -70,9 +106,57 @@ public class Generation extends Frame  {
             }
         }
     }
-    
+
     public void setCellConfiguration(int xpos, int ypos, boolean state) {
         this.cell[xpos][ypos] = new Cell();
         this.cell[xpos][ypos].setState(state);
     }
-} 
+
+    private void findCell(int xpos, int ypos) {
+
+        int xcoordinate = (xpos - 10) / this.div;
+        int ycoordinate = (ypos - 40) / this.div;
+
+        //System.out.println("xcoordinate: " + xcoordinate);
+        //System.out.println("ycoordinate: " + ycoordinate);
+
+        Cell oneCell = this.cell[xcoordinate][ycoordinate];
+        if (oneCell.getState()) {
+            oneCell.setState(false);
+        } else {
+            oneCell.setState(true);
+        }
+    }
+    
+
+
+        private class StartButton extends Button{
+            public StartButton(int x, int y, String symbol){
+                setLocation(x,y);
+                setSize(30,30);
+                setBackground(Color.GREEN);
+                setLabel(symbol);  
+                enableEvents(AWTEvent.ACTION_EVENT_MASK);
+            }
+
+            @Override
+            protected void processActionEvent(ActionEvent e) {
+                
+            }      
+        }
+        
+         private class EndButton extends Button{
+            public EndButton(int x, int y, String symbol){
+                setLocation(x,y);
+                setSize(30,30);
+                setBackground(Color.ORANGE);
+                setLabel(symbol);  
+                enableEvents(AWTEvent.ACTION_EVENT_MASK);
+            }
+
+            @Override
+            protected void processActionEvent(ActionEvent e) {
+                
+            }      
+        }
+}

@@ -3,12 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/netbeans_workplace/GameOfLifeNew/src/gameoflifenew/Cell.java</file>
-            <file>file:/D:/netbeans_workplace/GameOfLifeNew/src/gameoflifenew/Generation.java</file>
-            <file>file:/D:/netbeans_workplace/GameOfLifeNew/src/backup/Generation.java</file>
-            <file>file:/D:/netbeans_workplace/GameOfLifeNew/src/gameoflifenew/GameOfLifeNew.java</file>
-            <file>file:/D:/netbeans_workplace/GameOfLifeNew/src/gameoflifenew/GameOfLife.java</file>
-            <file>file:/D:/netbeans_workplace/GameOfLifeNew/src/backup/Cell.java</file>
+            <file>file:/D:/netbeans_workplace/GOL/src/gameoflifenew/Cell.java</file>
+            <file>file:/D:/netbeans_workplace/GOL/src/gameoflifenew/Generation.java</file>
+            <file>file:/D:/netbeans_workplace/GOL/src/gameoflifenew/GameOfLife.java</file>
+            <file>file:/D:/netbeans_workplace/GOL/src/gameoflifenew/GameOfLifeNew.java</file>
         </group>
     </open-files>
 </project-private>
