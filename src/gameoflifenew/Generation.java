@@ -48,12 +48,90 @@ public class Generation extends Frame {
         this.setInitialConfiguration();
     }
 
+    public Cell[][] getCell() {
+        return cell;
+    }
+
+    public void setCell(Cell[][] cell) {
+        this.cell = cell;
+    }
+    
     private void setUpMainWindow() {
         setLayout(null);
         setSize(xDim, yDim);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     }
 
+    private int countActiveNeighboringCells(Cell[][] cell, int dimX, int dimY, int posX, int posY) {
+        int activeCounter = 0;
+
+        int indexX;
+        int indexY;
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if ((i == 0) && (j == 0)) {
+                    continue;
+                }
+
+                indexX = posX + i;
+                indexY = posY + j;
+
+                // Correcting x position
+                if (indexX < 0) {
+                    indexX = dimX - 1;
+                } else if (indexX >= dimX) {
+                    indexX = 0;
+                }
+
+                // Correcting y position
+                if (indexY < 0) {
+                    indexY = dimY - 1;
+                } else if (indexY >= dimY) {
+                    indexY = 0;
+                }
+
+                if (cell[indexX][indexY].getState() == true) {
+                    activeCounter++;
+                }
+            }
+        }
+
+        return activeCounter;
+    }
+
+    private boolean nextCellState(int nrActiveCells, boolean curState) {
+
+        if (nrActiveCells < 2) {
+            curState = false;
+        }
+        return curState;
+    }
+
+    public void evolve() {
+        int cellDimX = 10;
+        int cellDimY = 10;
+
+        // Get cells
+        //boolean[][] cellMap = new boolean[cellDimX][cellDimY];
+        Cell[][] cellMap = this.getCell();
+
+        // Create dummy cells
+        boolean[][] cellMapDummy = new boolean[cellDimX][cellDimY];
+
+        // Read neighboring cell
+        for (int i = 0; i < cellDimX; i++) {
+            for (int j = 0; j < cellDimY; j++) {
+                //cellMapDummy[cellDimX][cellDimY] = true;
+                int nrActiveCells = countActiveNeighboringCells(cellMap, cellDimX, cellDimY, i, j);
+                boolean nextState = nextCellState(nrActiveCells, cellMap[i][j].getState());
+
+                cellMap[i][j].setState(nextState);
+            }
+        }
+    }
+
+    
     private void setupMouseAdapter() {
 
         addMouseListener(new MouseAdapter() {
