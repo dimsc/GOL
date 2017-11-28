@@ -14,7 +14,7 @@ public class GameOfLifeNew {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)  throws RuntimeException{
         // TODO code application logic here
          GameOfLife s = new GameOfLife();
     }
