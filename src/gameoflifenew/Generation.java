@@ -141,7 +141,6 @@ public class Generation extends Frame implements Runnable {
         // Read neighboring cell
         for (int i = 0; i < cellDimX; i++) {
             for (int j = 0; j < cellDimY; j++) {
-                //cellMapDummy[cellDimX][cellDimY] = true;
                 int nrActiveCells = countActiveNeighboringCells(cellMap, cellDimX, cellDimY, i, j);
                 boolean nextState = nextCellState(nrActiveCells, cellMap[i][j].getState());
 
@@ -161,7 +160,8 @@ public class Generation extends Frame implements Runnable {
     }
     
     
-     private void showCellMap() {
+
+    private void showCellMap() {
         int cellDimX = this.getCellMapDimX();
         int cellDimY = this.getCellMapDimY();
         
@@ -270,7 +270,7 @@ public class Generation extends Frame implements Runnable {
         
         showCellMap();
     }
-    
+   
 
     @Override
     public void run() {
@@ -382,20 +382,21 @@ public class Generation extends Frame implements Runnable {
 
     }
 
+        
     private class EndButton extends Button{
        public EndButton(int x, int y, String symbol){
            setLocation(x,y);
            setSize(30,30);
-            setBackground(Color.ORANGE);
-            setLabel(symbol);
-            enableEvents(AWTEvent.ACTION_EVENT_MASK);
-        }
+           setBackground(Color.ORANGE);
+           setLabel(symbol);  
+           enableEvents(AWTEvent.ACTION_EVENT_MASK);
+       }
 
-        @Override
-        protected void processActionEvent(ActionEvent e) {
+       @Override
+       protected void processActionEvent(ActionEvent e) {
            //System.out.println("End evolve");
            setCellPattern(2);
-        }
+       }      
 
   
     }
