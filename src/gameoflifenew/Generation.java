@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.event.MouseInputAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Generation extends Frame implements Runnable {
 
@@ -27,6 +29,8 @@ public class Generation extends Frame implements Runnable {
     private EndButton endButton;
     private static Thread thread;
     private static boolean status = false;
+    private List<Integer> xsave = new ArrayList<Integer>();
+    private List<Integer> ysave = new ArrayList<Integer>();
 
     protected Generation(int w, int h, String s) {
         super(s);
@@ -40,11 +44,11 @@ public class Generation extends Frame implements Runnable {
         setUpMainWindow();
         setupMouseAdapter();
 
-        startButton= new StartButton(100, 680,"Start");
+        startButton = new StartButton(100, 680, "Start");
         this.add(startButton);
         startButton.setEnabled(true);
 
-        endButton= new EndButton(300,680,"End");
+        endButton = new EndButton(300, 680, "End");
         this.add(endButton);
         endButton.setEnabled(true);
 
@@ -67,7 +71,7 @@ public class Generation extends Frame implements Runnable {
     public int getCellMapDimY() {
         return yCell;
     }
-    
+
     private void setUpMainWindow() {
         setLayout(null);
         setSize(xDim, yDim);
@@ -116,84 +120,84 @@ public class Generation extends Frame implements Runnable {
 
         if ((nrActiveCells < 2) || (nrActiveCells > 3)) {
             curState = false;
-        }
-        else if (nrActiveCells == 3) {
+        } else if (nrActiveCells == 3) {
             curState = true;
         }
 
         return curState;
     }
 
-    public void evolve() {
-        int cellDimX = this.getCellMapDimX();
-        int cellDimY = this.getCellMapDimY();
+    public void evolve(List<Integer> xsave, List<Integer> ysave) {
 
-//        int cellDimX = 10;
-//        int cellDimY = 10;
+        for (int p = 0; p < xsave.size(); p++) {
+            int cellDimX = xsave.get(p);
+            int cellDimY = ysave.get(p);
+             System.out.println("cellDimX: " + cellDimX);
+             System.out.println("cellDimY: " + cellDimY);
+           
 
-        // Get cells
-        //boolean[][] cellMap = new boolean[cellDimX][cellDimY];
-        Cell[][] cellMap = this.getCell();
+            //        int cellDimX = 10;
+            //        int cellDimY = 10;
+            // Get cells
+            //boolean[][] cellMap = new boolean[cellDimX][cellDimY];
+            Cell[][] cellMap = this.getCell();
 
-        // Create dummy cells
-        boolean[][] cellMapDummy = new boolean[cellDimX][cellDimY];
+            // Create dummy cells
+            boolean[][] cellMapDummy = new boolean[cellDimX][cellDimY];
 
-        // Read neighboring cell
-        for (int i = 0; i < cellDimX; i++) {
-            for (int j = 0; j < cellDimY; j++) {
-                int nrActiveCells = countActiveNeighboringCells(cellMap, cellDimX, cellDimY, i, j);
-                boolean nextState = nextCellState(nrActiveCells, cellMap[i][j].getState());
+            // Read neighboring cell
+            for (int i = 0; i < cellDimX; i++) {
+                for (int j = 0; j < cellDimY; j++) {
+                    int nrActiveCells = countActiveNeighboringCells(cellMap, cellDimX, cellDimY, i, j);
+                    boolean nextState = nextCellState(nrActiveCells, cellMap[i][j].getState());
 
-                // Store next cell state in the dummy cell map
-                cellMapDummy[i][j] = nextState;
+                    // Store next cell state in the dummy cell map
+                    cellMapDummy[i][j] = nextState;
+                }
             }
-        }
-        
-        // Change all cell states from the dummy cell map
-        for (int i = 0; i < cellDimX; i++) {
-            for (int j = 0; j < cellDimY; j++) {
-                cellMap[i][j].setState(cellMapDummy[i][j]);
+
+            // Change all cell states from the dummy cell map
+            for (int i = 0; i < cellDimX; i++) {
+                for (int j = 0; j < cellDimY; j++) {
+                    cellMap[i][j].setState(cellMapDummy[i][j]);
+                }
             }
+            line = false;
+            repaint();
+            System.out.println("painted");
         }
-        
-        showCellMap();
+
     }
-    
-    
 
     private void showCellMap() {
         int cellDimX = this.getCellMapDimX();
         int cellDimY = this.getCellMapDimY();
-        
+
 //        int cellDimX = 10;
 //        int cellDimY = 10;
-        
         // Get cells
         Cell[][] cellMap = this.getCell();
-        
+
         //System.out.println("Start evolution!!");
         System.out.println("\n");
-        
+
         for (int j = (cellDimY - 1); j >= 0; j--) {
             String txt = "";
-            
+
             for (int i = (cellDimX - 1); i >= 0; i--) {
-                if(cellMap[i][j].getState() == true) {
+                if (cellMap[i][j].getState() == true) {
                     txt += "*|";
-                }
-                else {
+                } else {
                     txt += " |";
                 }
             }
-            
+
             System.out.println(txt);
         }
     }
 
-    
-    
     private void setCellPattern(int pattern) {
-        switch(pattern){
+        switch (pattern) {
             case 1:
                 setPatternBlinker();
                 break;
@@ -205,82 +209,78 @@ public class Generation extends Frame implements Runnable {
                 break;
         }
     }
-    
+
     private void setPatternToad() {
         int cellDimX = this.getCellMapDimX();
         int cellDimY = this.getCellMapDimY();
 
 //        int cellDimX = 10;
 //        int cellDimY = 10;
-        
         // Get cells
         Cell[][] cellMap = this.getCell();
-        
+
         for (int i = 0; i < cellDimX; i++) {
             for (int j = 0; j < cellDimY; j++) {
                 boolean isActive = false;
-                
-                if(i == 1) {
+
+                if (i == 1) {
+                    if ((j == 2) || (j == 3)) {
+                        isActive = true;
+                    }
+                } else if ((i == 2) && (j == 1)) {
+                    isActive = true;
+                } else if ((i == 3) && (j == 4)) {
+                    isActive = true;
+                } else if (i == 4) {
                     if ((j == 2) || (j == 3)) {
                         isActive = true;
                     }
                 }
-                else if ((i == 2) && (j == 1)) {
-                    isActive = true;
-                }
-                else if ((i == 3) && (j == 4)) {
-                    isActive = true;
-                }
-                else if (i == 4) {
-                    if ((j == 2) || (j == 3)) {
-                        isActive = true;
-                    }
-                }
-                
+
                 cellMap[i][j].setState(isActive);
             }
         }
-        
+
         showCellMap();
     }
-    
+
     private void setPatternBlinker() {
         int cellDimX = this.getCellMapDimX();
         int cellDimY = this.getCellMapDimY();
 
 //        int cellDimX = 10;
 //        int cellDimY = 10;
-
         // Get cells
         Cell[][] cellMap = this.getCell();
-        
+
         for (int i = 0; i < cellDimX; i++) {
             for (int j = 0; j < cellDimY; j++) {
                 boolean isActive = false;
-                
-                if(i == 2) {
-                    if((j == 1) || (j == 2) || (j == 3)) {
+
+                if (i == 2) {
+                    if ((j == 1) || (j == 2) || (j == 3)) {
                         isActive = true;
                     }
                 }
-                
+
                 cellMap[i][j].setState(isActive);
             }
         }
-        
+
         showCellMap();
     }
-   
 
     @Override
     public void run() {
         thread = Thread.currentThread();
-        while (status) {
+        //while (status) {
             System.out.println("Doing heavy processing - START " + thread.getName());
             try {
                 thread.sleep(1000);
-                System.out.println("Wait " + thread.getName());
-                evolve();
+                
+                evolve(xsave, ysave);
+                System.out.println("xsave :" + xsave.size());
+                
                 //Get database connection, delete unused data from DB
                 //doDBProcessing();
             } catch (InterruptedException e) {
@@ -288,7 +288,7 @@ public class Generation extends Frame implements Runnable {
                 status = false;
             }
             System.out.println("Doing heavy processing - END " + thread.getName());
-        }
+        //}
     }
 
     private void setupMouseAdapter() {
@@ -299,15 +299,24 @@ public class Generation extends Frame implements Runnable {
                 //this.cell = new Cell[xDim][yDim];
                 System.out.println("X pos: " + evt.getX());
                 System.out.println("Y pos: " + evt.getY());
+
                 findCell(evt.getX(), evt.getY());
+
                 // 
                 line = false;
-                int xcoordinate = Math.round(evt.getX()/20)*20+10;
-                int ycoordinate = Math.round(evt.getY()/20)*20; 
+                int xcoordinate = Math.round(evt.getX() / 20) * 20 + 10;
+                int ycoordinate = Math.round(evt.getY() / 20) * 20;
+
+                int xsaver = (evt.getX() - 10) / div;
+                int ysaver = (evt.getY() - 40) / div;
+
+                xsave.add(Integer.valueOf(xsaver));
+                ysave.add(Integer.valueOf(ysaver));
+
                 System.out.println("xcoordinate: " + xcoordinate);
                 System.out.println("ycoordinate: " + ycoordinate);
 
-                repaint(xcoordinate, ycoordinate, 20, 20);
+                repaint();
                 //this.cell[i][k].draw(g, i, k);
             }
         });
@@ -322,15 +331,19 @@ public class Generation extends Frame implements Runnable {
 
     @Override
     public void paint(Graphics g) {
-
         for (int i = 0; i < xCell; i++) {
             for (int k = 0; k < yCell; k++) {
+               String text ="";
                 if (this.cell[i][k].getState()) {
-                    g.setColor(Color.white);
-                } else {
+                    text ="black";
                     g.setColor(Color.black);
-                }
+                } else {
+                     text ="white";
+                    g.setColor(Color.white);
+                } 
+                System.out.println("xCell [i : " +i+"][ yCell : " + k + "][ state : " + this.cell[i][k].getState() + "][ color : " + text + "]");
                 this.cell[i][k].draw(g, i, k, line);
+                //System.out.println("paint [i : " + i + "][ k : " + k + "][ state : " + this.cell[i][k].getState() + "]");
             }
         }
     }
@@ -354,21 +367,25 @@ public class Generation extends Frame implements Runnable {
         int xcoordinate = (xpos - 10) / this.div;
         int ycoordinate = (ypos - 40) / this.div;
 
-        //System.out.println("xcoordinate: " + xcoordinate);
-        //System.out.println("ycoordinate: " + ycoordinate);
-
+        String txt = "";
         Cell oneCell = this.cell[xcoordinate][ycoordinate];
         if (oneCell.getState()) {
             oneCell.setState(false);
+            txt = "die";
         } else {
             oneCell.setState(true);
+            txt = "alive";
         }
+        this.cell[xcoordinate][ycoordinate] = oneCell;
+        System.out.println("findCell [xcoordinate : "+xcoordinate +"][ ycoordinate : "+ycoordinate + "][ oneCell : "+txt  +"]");
+
     }
 
-    private class StartButton extends Button{
-        public StartButton(int x, int y, String symbol){
-            setLocation(x,y);
-            setSize(30,30);
+    private class StartButton extends Button {
+
+        public StartButton(int x, int y, String symbol) {
+            setLocation(x, y);
+            setSize(30, 30);
             setBackground(Color.GREEN);
             setLabel(symbol);
             enableEvents(AWTEvent.ACTION_EVENT_MASK);
@@ -376,28 +393,28 @@ public class Generation extends Frame implements Runnable {
 
         @Override
         protected void processActionEvent(ActionEvent e) {
-            //System.out.println("Start evolve");
-            evolve();
+            System.out.println("Start evolve");
+            status = true;
+            run();
         }
 
     }
 
-        
-    private class EndButton extends Button{
-       public EndButton(int x, int y, String symbol){
-           setLocation(x,y);
-           setSize(30,30);
-           setBackground(Color.ORANGE);
-           setLabel(symbol);  
-           enableEvents(AWTEvent.ACTION_EVENT_MASK);
-       }
+    private class EndButton extends Button {
 
-       @Override
-       protected void processActionEvent(ActionEvent e) {
-           //System.out.println("End evolve");
-           setCellPattern(2);
-       }      
+        public EndButton(int x, int y, String symbol) {
+            setLocation(x, y);
+            setSize(30, 30);
+            setBackground(Color.ORANGE);
+            setLabel(symbol);
+            enableEvents(AWTEvent.ACTION_EVENT_MASK);
+        }
 
-  
+        @Override
+        protected void processActionEvent(ActionEvent e) {
+            //System.out.println("End evolve");
+            setCellPattern(2);
+        }
+
     }
 }

@@ -5,8 +5,8 @@
  */
 package gameoflifenew;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -51,8 +51,12 @@ public class Cell {
             System.out.println("Cell height:"+height);
             */
         } else {
-            xpos = (x * div);
-            ypos = (y * div);
+            
+            xpos = (x * div)+ 10;
+            ypos = (y * div)+ 40;
+            g.clearRect(xpos, ypos, width, height);
+            g.drawRect(xpos, ypos, width, height);
+            
             //System.out.println("Cell xpos:"+xpos);
             //System.out.println("Cell ypos:"+ypos);
             while (width > 0 && height > 0) {
